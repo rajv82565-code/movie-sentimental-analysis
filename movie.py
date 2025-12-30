@@ -15,7 +15,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# ---------- Custom CSS (React-style) ----------
+# ---------- Custom CSS ----------
 st.markdown("""
 <style>
 body {
@@ -25,7 +25,6 @@ body {
     background: #1e293b;
     padding: 25px;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 .title {
     text-align: center;
@@ -66,8 +65,8 @@ def clean_text(text):
     text = [word for word in text if word not in stop_words]
     return ' '.join(text)
 
-# ---------- Load Dataset ----------
-data = pd.read_csv("movie_reviews.csv")  
+# ---------- Load Dataset (FIXED LINE) ----------
+data = pd.read_csv("IMDB Dataset.csv")   # ✅ FIXED
 data['clean_review'] = data['review'].apply(clean_text)
 
 # ---------- Vectorizer & Model ----------
@@ -84,10 +83,7 @@ st.markdown("<div class='card'>", unsafe_allow_html=True)
 st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
-review_input = st.text_area(
-    "✍️ Enter your movie review",
-    height=150
-)
+review_input = st.text_area("✍️ Enter your movie review", height=150)
 
 if st.button("🔍 Analyze Sentiment"):
     if review_input.strip() == "":
@@ -103,3 +99,4 @@ if st.button("🔍 Analyze Sentiment"):
             st.markdown("<div class='result-negative'>☹️ Negative Review</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
+
