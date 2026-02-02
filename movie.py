@@ -16,17 +16,33 @@ st.set_page_config(
 # ---------- Custom CSS ----------
 st.markdown("""
 <style>
-body { background-color: #0f172a; }
-.card { background: #1e293b; padding: 25px; border-radius: 16px; }
-.title { text-align: center; font-size: 36px; font-weight: 700; color: #38bdf8; }
-.subtitle { text-align: center; color: #cbd5f5; }
+[data-testid="stAppViewContainer"] {
+    background-color: #0f172a !important;
+}
+[data-testid="stHeader"] {
+    background: transparent !important;
+}
+[data-testid="stTextArea"] textarea {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #334155 !important;
+}
+[data-testid="stButton"] button {
+    background-color: #38bdf8 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+h1.title { text-align: center; font-size: 36px; font-weight: 700; color: #38bdf8; margin-bottom: 0px; }
+p.subtitle { text-align: center; color: #cbd5f5; font-size: 18px; margin-bottom: 25px; }
 .result-positive {
-    background: #14532d; padding: 15px; border-radius: 12px;
-    color: #86efac; text-align: center; font-size: 22px;
+    background: #064e3b; padding: 15px; border-radius: 12px;
+    color: #6ee7b7; text-align: center; font-size: 22px;
+    border: 1px solid #059669;
 }
 .result-negative {
     background: #7f1d1d; padding: 15px; border-radius: 12px;
-    color: #fecaca; text-align: center; font-size: 22px;
+    color: #fca5a5; text-align: center; font-size: 22px;
+    border: 1px solid #b91c1c;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -45,27 +61,28 @@ model = pickle.load(open("model.pkl", "rb"))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 # ---------- UI ----------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
+st.markdown("<h1 class='title'>🎬 Movie Review Sentiment Analysis</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>NLP-based Polarity Detection</p>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
-
-review_input = st.text_area("✍️ Enter your movie review", height=150)
+review_input = st.text_area(
+    "✍️ Enter your movie review",
+    height=150,
+    placeholder="The cinematography was breathtaking and the acting was top-notch. I highly recommend it!"
+)
 
 if st.button("🔍 Analyze Sentiment"):
     if review_input.strip() == "":
         st.warning("Please enter a review")
     else:
-        clean_review = clean_text(review_input)
-        vector = vectorizer.transform([clean_review])
-        prediction = model.predict(vector)[0]
+        with st.spinner("Analyzing sentiment..."):
+            clean_review = clean_text(review_input)
+            vector = vectorizer.transform([clean_review])
+            prediction = model.predict(vector)[0]
 
         if prediction == "positive":
-            st.markdown("<div class='result-positive'>😊 Positive Review</div>", unsafe_allow_html=True)
+            st.markdown("<p class='result-positive' role='status' aria-live='polite'>😊 Positive Review</p>", unsafe_allow_html=True)
         else:
-            st.markdown("<div class='result-negative'>☹️ Negative Review</div>", unsafe_allow_html=True)
-
-st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("<p class='result-negative' role='status' aria-live='polite'>☹️ Negative Review</p>", unsafe_allow_html=True)
 
 
 
