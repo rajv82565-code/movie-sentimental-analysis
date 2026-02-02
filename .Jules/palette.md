@@ -1,0 +1,3 @@
+## 2025-05-14 - Streamlit Accessibility and Styling Patterns
+**Learning:** Customizing Streamlit's UI requires targeting specific `data-testid` attributes (e.g., `stAppViewContainer`, `stHeader`, `stTextArea`) in CSS with `!important` to override the default Emotion-based styles. For accessibility, replacing generic `div` elements with semantic `h1`, `p`, and ARIA roles (`role="status"`) ensures that screen readers correctly interpret and announce dynamic content like model predictions.
+**Action:** Use `data-testid` selectors for precise UI overrides and prioritize semantic HTML combined with `aria-live` regions for dynamic Streamlit outputs.
