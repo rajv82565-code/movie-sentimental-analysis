@@ -1,0 +1,3 @@
+## 2025-05-14 - [Streamlit Theming and Accessibility]
+**Learning:** Streamlit inserts internal wrapper divs that break manual HTML structure (like opening a div in one markdown and closing in another). Using native `st.container(border=True)` combined with `[data-testid="stVerticalBlockBorderWrapper"]` CSS targeting is a much more robust way to create card-like UI elements. Also, custom results should always include `role="status"` and `aria-live="polite"` for accessibility in Streamlit's dynamic environment.
+**Action:** Use `st.container(border=True)` for grouping elements and target it with specific CSS instead of manual HTML wrappers.
