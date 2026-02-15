@@ -16,10 +16,17 @@ st.set_page_config(
 # ---------- Custom CSS ----------
 st.markdown("""
 <style>
-body { background-color: #0f172a; }
-.card { background: #1e293b; padding: 25px; border-radius: 16px; }
-.title { text-align: center; font-size: 36px; font-weight: 700; color: #38bdf8; }
-.subtitle { text-align: center; color: #cbd5f5; }
+[data-testid="stAppViewContainer"] { background-color: #0f172a; }
+[data-testid="stHeader"] { background: rgba(0,0,0,0); }
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+}
+h1 { text-align: center; font-size: 36px !important; font-weight: 700 !important; color: #38bdf8 !important; }
+.subtitle { text-align: center; color: #ffffff; margin-bottom: 2rem; }
+[data-testid="stWidgetLabel"] p { color: #ffffff !important; }
 .result-positive {
     background: #14532d; padding: 15px; border-radius: 12px;
     color: #86efac; text-align: center; font-size: 22px;
@@ -45,27 +52,31 @@ model = pickle.load(open("model.pkl", "rb"))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
 # ---------- UI ----------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("<h1>🎬 Movie Review Sentiment Analysis</h1>", unsafe_allow_html=True)
+    st.markdown("<p class='subtitle'>NLP-based Polarity Detection</p>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
+    review_input = st.text_area(
+        "✍️ Enter your movie review",
+        height=150,
+        placeholder="e.g., The cinematography was stunning and the acting was top-notch!"
+    )
 
-review_input = st.text_area("✍️ Enter your movie review", height=150)
-
-if st.button("🔍 Analyze Sentiment"):
-    if review_input.strip() == "":
-        st.warning("Please enter a review")
-    else:
-        clean_review = clean_text(review_input)
-        vector = vectorizer.transform([clean_review])
-        prediction = model.predict(vector)[0]
-
-        if prediction == "positive":
-            st.markdown("<div class='result-positive'>😊 Positive Review</div>", unsafe_allow_html=True)
+    if st.button("🔍 Analyze Sentiment", use_container_width=True):
+        if review_input.strip() == "":
+            st.warning("Please enter a review before analyzing.")
         else:
-            st.markdown("<div class='result-negative'>☹️ Negative Review</div>", unsafe_allow_html=True)
+            with st.spinner("Analyzing sentiment..."):
+                clean_review = clean_text(review_input)
+                vector = vectorizer.transform([clean_review])
+                prediction = model.predict(vector)[0]
 
-st.markdown("</div>", unsafe_allow_html=True)
+                result_html = f"""
+                <div role="status" aria-live="polite" class='result-{"positive" if prediction == "positive" else "negative"}'>
+                    {"😊 Positive Review" if prediction == "positive" else "☹️ Negative Review"}
+                </div>
+                """
+                st.markdown(result_html, unsafe_allow_html=True)
 
 
 
