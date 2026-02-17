@@ -1,0 +1,3 @@
+## 2025-01-24 - Streamlit Dark Theme & Container Styling
+**Learning:** Standard CSS `body` selectors often fail to apply background colors in Streamlit when injected via `st.markdown`. Instead, targeting `[data-testid="stAppViewContainer"]` is the reliable convention for application-wide background styling. Additionally, `st.container(border=True)` elements can be consistently styled by targeting `[data-testid="stVerticalBlockBorderWrapper"]`.
+**Action:** Always use `[data-testid="stAppViewContainer"]` for background overrides and prefer `st.container(border=True)` for card-like groupings in Streamlit apps.
