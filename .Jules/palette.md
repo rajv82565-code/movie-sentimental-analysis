@@ -1,0 +1,3 @@
+## 2026-02-20 - [Streamlit Container Styling and Accessibility]
+**Learning:** Customizing Streamlit layouts with manual HTML divs can lead to broken DOM structures where containers are closed prematurely. Using `st.container(border=True)` and targeting `data-testid="stVerticalBlockBorderWrapper"` provides a more robust way to apply card-like styling. Additionally, custom dark themes in Streamlit often cause low contrast on default buttons, requiring explicit styling of `data-testid="stBaseButton-secondary"` for accessibility.
+**Action:** Always prefer native Streamlit containers over manual HTML wrappers for layout, and explicitly style buttons when using custom dark backgrounds to ensure high contrast.
