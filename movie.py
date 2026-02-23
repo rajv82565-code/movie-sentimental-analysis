@@ -2,11 +2,28 @@ import streamlit as st
 import pandas as pd
 import re
 import nltk
+import pickle
+import html
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
-nltk.download('stopwords')
+@st.cache_resource
+def load_resources():
+    nltk.download('stopwords')
+    try:
+        with open("model.pkl", "rb") as f:
+            model = pickle.load(f)
+        with open("vectorizer.pkl", "rb") as f:
+            vectorizer = pickle.load(f)
+        return model, vectorizer
+    except FileNotFoundError:
+        return None, None
+
+model, vectorizer = load_resources()
+if model is None:
+    st.error("Model files not found. Please run the Jupyter notebook first.")
+    st.stop()
 
 # ---------- Page Config ----------
 st.set_page_config(
@@ -27,14 +44,18 @@ df = load_data()
 # ---------- Custom CSS (React-style) ----------
 st.markdown("""
 <style>
-body {
+[data-testid="stAppViewContainer"] {
     background-color: #0f172a;
 }
-.card {
-    background: #1e293b;
-    padding: 25px;
-    border-radius: 16px;
+[data-testid="stHeader"] {
+    background-color: rgba(0,0,0,0);
+}
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #1e293b !important;
+    padding: 25px !important;
+    border-radius: 16px !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: none !important;
 }
 .title {
     text-align: center;
@@ -98,28 +119,19 @@ def clean_text(text):
     text = [word for word in text if word not in stop_words]
     return ' '.join(text)
 
-# ---------- Load Model and Vectorizer ----------
-import pickle
-try:
-    with open("model.pkl", "rb") as f:
-        model = pickle.load(f)
-    with open("vectorizer.pkl", "rb") as f:
-        vectorizer = pickle.load(f)
-except FileNotFoundError:
-    st.error("Model files not found. Please run the Jupyter notebook first.")
-    st.stop()
-
 # ---------- UI ----------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("<div class='title' role='heading' aria-level='1'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle' role='heading' aria-level='2'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
+with st.form("search_form", border=False):
+    movie_name = st.text_input(
+        "✍️ Enter a Movie Name",
+        placeholder="e.g. Inception, The Matrix..."
+    )
+    submit_button = st.form_submit_button("🔍 Analyze Sentiment")
 
-movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
-)
-
-if st.button("🔍 Analyze Sentiment"):
+if submit_button:
     if movie_name.strip() == "":
         st.warning("Please enter a movie name")
     else:
@@ -156,7 +168,8 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 total = len(reviews_text)
                 
-                st.markdown(f"### Results for '**{movie_name}**'")
+                escaped_name = html.escape(movie_name)
+                st.markdown(f"### Results for '**{escaped_name}**'")
                 st.write(f"Found exactly {total} review(s) mentioning this movie.")
                 
                 # Display Results
@@ -187,11 +200,12 @@ if st.button("🔍 Analyze Sentiment"):
                 st.markdown("<br>", unsafe_allow_html=True)
                 
                 # Overall sentiment logic
+                sentiment_html = ""
                 if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
+                    sentiment_html = "<div class='result-positive'><span role='img' aria-label='happy face'>😊</span> Overall Positive</div>"
                 elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                    sentiment_html = "<div class='result-negative'><span role='img' aria-label='sad face'>☹️</span> Overall Negative</div>"
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    sentiment_html = "<div class='result-neutral'><span role='img' aria-label='neutral face'>😐</span> Overall Neutral</div>"
 
-st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown(f"<div role='status' aria-live='polite'>{sentiment_html}</div>", unsafe_allow_html=True)
