@@ -1,0 +1,23 @@
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.2:8501
+  External URL: http://35.224.132.190:8501
+
+[nltk_data] Downloading package stopwords to /home/jules/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator MultinomialNB from version 1.1.3 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.1.3 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/jules/.pyenv/versions/3.12.12/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.1.3 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/app/movie.py:140: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.
+  relevant_reviews = df[df['review'].str.contains(movie_name, case=False, na=False)]
