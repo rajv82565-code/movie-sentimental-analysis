@@ -27,7 +27,7 @@ df = load_data()
 # ---------- Custom CSS (React-style) ----------
 st.markdown("""
 <style>
-body {
+[data-testid="stAppViewContainer"] {
     background-color: #0f172a;
 }
 .card {
@@ -112,11 +112,13 @@ except FileNotFoundError:
 # ---------- UI ----------
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
+st.markdown("<div class='title'><span role='img' aria-label='clapperboard'>🎬</span> Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
 movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
+    "✍️ Enter a Movie Name",
+    placeholder="e.g., The Matrix, Inception...",
+    help="Enter a movie title to search for reviews in the IMDB dataset."
 )
 
 if st.button("🔍 Analyze Sentiment"):
@@ -188,10 +190,10 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 # Overall sentiment logic
                 if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-positive' role='status'><span role='img' aria-label='happy face'>😊</span> Overall Positive</div>", unsafe_allow_html=True)
                 elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-negative' role='status'><span role='img' aria-label='frowning face'>☹️</span> Overall Negative</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-neutral' role='status'><span role='img' aria-label='neutral face'>😐</span> Overall Neutral</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
