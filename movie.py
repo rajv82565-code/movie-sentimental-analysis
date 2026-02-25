@@ -115,11 +115,13 @@ st.markdown("<div class='card'>", unsafe_allow_html=True)
 st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
-movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
-)
+with st.form(key="search_form", border=False):
+    movie_name = st.text_input(
+        "✍️ Enter a Movie Name"
+    )
+    submit_button = st.form_submit_button("🔍 Analyze Sentiment")
 
-if st.button("🔍 Analyze Sentiment"):
+if submit_button:
     if movie_name.strip() == "":
         st.warning("Please enter a movie name")
     else:
