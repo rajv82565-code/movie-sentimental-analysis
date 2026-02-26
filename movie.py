@@ -18,7 +18,7 @@ st.set_page_config(
 @st.cache_data
 def load_data():
     try:
-        return pd.read_csv("IMDB Dataset.csv")
+        return pd.read_csv("movie_sentiment_recommendation_dataset.csv")
     except FileNotFoundError:
         return pd.DataFrame(columns=["review", "sentiment"])
 
