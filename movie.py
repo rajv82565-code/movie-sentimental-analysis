@@ -30,11 +30,13 @@ st.markdown("""
 body {
     background-color: #0f172a;
 }
-.card {
-    background: #1e293b;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+/* Target the native Streamlit container to apply card-like styling */
+[data-testid="stVerticalBlockBorderWrapper"] {
+    background-color: #1e293b !important;
+    padding: 2rem !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+    border: 1px solid #334155 !important;
 }
 .title {
     text-align: center;
@@ -110,88 +112,88 @@ except FileNotFoundError:
     st.stop()
 
 # ---------- UI ----------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
+with st.container(border=True):
+    st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
+    st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
+    with st.form(key="sentiment_form", border=False):
+        movie_name = st.text_input(
+            "✍️ Enter a Movie Name",
+            placeholder="e.g., The Dark Knight"
+        )
+        submit_button = st.form_submit_button("🔍 Analyze Sentiment")
 
-movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
-)
-
-if st.button("🔍 Analyze Sentiment"):
-    if movie_name.strip() == "":
-        st.warning("Please enter a movie name")
-    else:
-        with st.spinner(f"Searching for reviews mentioning '{movie_name}'..."):
-            # Search dataset for reviews containing the movie name
-            relevant_reviews = df[df['review'].str.contains(movie_name, case=False, na=False)]
-            
-            if len(relevant_reviews) == 0:
-                st.warning(f"No reviews found in the dataset for '{movie_name}'. Please try another movie.")
-            else:
-                reviews_text = relevant_reviews['review'].tolist()
+    if submit_button:
+        if movie_name.strip() == "":
+            st.warning("Please enter a movie name")
+        else:
+            with st.spinner(f"Searching for reviews mentioning '{movie_name}'..."):
+                # Search dataset for reviews containing the movie name
+                relevant_reviews = df[df['review'].str.contains(movie_name, case=False, na=False)]
                 
-                # Transform data and predict probabilities
-                clean_reviews = [clean_text(r) for r in reviews_text]
-                vectors = vectorizer.transform(clean_reviews)
-                probs = model.predict_proba(vectors)
-                
-                pos_count = 0
-                neg_count = 0
-                neu_count = 0
-                
-                # We have two classes: likely 0 is negative and 1 is positive
-                # Let's dynamically check classes just in case
-                pos_idx = list(model.classes_).index("positive")
-                neg_idx = list(model.classes_).index("negative")
-                
-                for prob in probs:
-                    if prob[pos_idx] > 0.6:
-                        pos_count += 1
-                    elif prob[neg_idx] > 0.6:
-                        neg_count += 1
-                    else:
-                        neu_count += 1
-                
-                total = len(reviews_text)
-                
-                st.markdown(f"### Results for '**{movie_name}**'")
-                st.write(f"Found exactly {total} review(s) mentioning this movie.")
-                
-                # Display Results
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Positive</div>
-                        <div class='stat-value' style='color: #86efac;'>{pos_count}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                with col2:
-                    st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Neutral</div>
-                        <div class='stat-value' style='color: #e2e8f0;'>{neu_count}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                with col3:
-                    st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Negative</div>
-                        <div class='stat-value' style='color: #fca5a5;'>{neg_count}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                st.markdown("<br>", unsafe_allow_html=True)
-                
-                # Overall sentiment logic
-                if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
-                elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                if len(relevant_reviews) == 0:
+                    st.warning(f"No reviews found in the dataset for '{movie_name}'. Please try another movie.")
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    reviews_text = relevant_reviews['review'].tolist()
 
-st.markdown("</div>", unsafe_allow_html=True)
+                    # Transform data and predict probabilities
+                    clean_reviews = [clean_text(r) for r in reviews_text]
+                    vectors = vectorizer.transform(clean_reviews)
+                    probs = model.predict_proba(vectors)
+
+                    pos_count = 0
+                    neg_count = 0
+                    neu_count = 0
+
+                    # We have two classes: likely 0 is negative and 1 is positive
+                    # Let's dynamically check classes just in case
+                    pos_idx = list(model.classes_).index("positive")
+                    neg_idx = list(model.classes_).index("negative")
+
+                    for prob in probs:
+                        if prob[pos_idx] > 0.6:
+                            pos_count += 1
+                        elif prob[neg_idx] > 0.6:
+                            neg_count += 1
+                        else:
+                            neu_count += 1
+
+                    total = len(reviews_text)
+
+                    st.markdown(f"### Results for '**{movie_name}**'")
+                    st.write(f"Found exactly {total} review(s) mentioning this movie.")
+
+                    # Display Results
+                    col1, col2, col3 = st.columns(3)
+
+                    with col1:
+                        st.markdown(f"""
+                        <div class='stat-box'>
+                            <div class='stat-label'>Positive</div>
+                            <div class='stat-value' style='color: #86efac;'>{pos_count}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    with col2:
+                        st.markdown(f"""
+                        <div class='stat-box'>
+                            <div class='stat-label'>Neutral</div>
+                            <div class='stat-value' style='color: #e2e8f0;'>{neu_count}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    with col3:
+                        st.markdown(f"""
+                        <div class='stat-box'>
+                            <div class='stat-label'>Negative</div>
+                            <div class='stat-value' style='color: #fca5a5;'>{neg_count}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                    st.markdown("<br>", unsafe_allow_html=True)
+
+                    # Overall sentiment logic
+                    if pos_count > neg_count and pos_count >= neu_count:
+                        st.markdown("<div class='result-positive' role='status' aria-live='polite'><span role='img' aria-label='positive sentiment'>😊</span> Overall Positive</div>", unsafe_allow_html=True)
+                    elif neg_count > pos_count and neg_count >= neu_count:
+                        st.markdown("<div class='result-negative' role='status' aria-live='polite'><span role='img' aria-label='negative sentiment'>☹️</span> Overall Negative</div>", unsafe_allow_html=True)
+                    else:
+                        st.markdown("<div class='result-neutral' role='status' aria-live='polite'><span role='img' aria-label='neutral sentiment'>😐</span> Overall Neutral</div>", unsafe_allow_html=True)
