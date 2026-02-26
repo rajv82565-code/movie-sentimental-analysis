@@ -16,7 +16,7 @@ def clean_text(text):
     return ' '.join(text)
 
 print("Loading data...")
-data = pd.read_csv("IMDB Dataset.csv")
+data = pd.read_csv("movie_sentiment_recommendation_dataset.csv")
 
 print("Cleaning text...")
 data['clean_review'] = data['review'].apply(clean_text)
