@@ -27,8 +27,11 @@ df = load_data()
 # ---------- Custom CSS (React-style) ----------
 st.markdown("""
 <style>
-body {
+[data-testid="stAppViewContainer"] {
     background-color: #0f172a;
+}
+[data-testid="stHeader"] {
+    background-color: rgba(0,0,0,0);
 }
 .card {
     background: #1e293b;
@@ -85,6 +88,9 @@ body {
     font-size: 16px;
     color: #cbd5e1;
 }
+.results-container h3, .results-container p {
+    color: #ffffff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -115,11 +121,14 @@ st.markdown("<div class='card'>", unsafe_allow_html=True)
 st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
-movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
-)
+with st.form(key='movie_search', border=False):
+    movie_name = st.text_input(
+        "✍️ Enter a Movie Name",
+        placeholder="e.g. Inception, Shutter Island..."
+    )
+    submit_button = st.form_submit_button("🔍 Analyze Sentiment")
 
-if st.button("🔍 Analyze Sentiment"):
+if submit_button:
     if movie_name.strip() == "":
         st.warning("Please enter a movie name")
     else:
@@ -156,8 +165,12 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 total = len(reviews_text)
                 
-                st.markdown(f"### Results for '**{movie_name}**'")
-                st.write(f"Found exactly {total} review(s) mentioning this movie.")
+                st.markdown(f"""
+                <div class="results-container" role="status" aria-live="polite">
+                    <h3>Results for '<strong>{movie_name}</strong>'</h3>
+                    <p>Found exactly {total} review(s) mentioning this movie.</p>
+                </div>
+                """, unsafe_allow_html=True)
                 
                 # Display Results
                 col1, col2, col3 = st.columns(3)
@@ -188,10 +201,10 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 # Overall sentiment logic
                 if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-positive'><span role='img' aria-label='Happy face'>😊</span> Overall Positive</div>", unsafe_allow_html=True)
                 elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-negative'><span role='img' aria-label='Sad face'>☹️</span> Overall Negative</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-neutral'><span role='img' aria-label='Neutral face'>😐</span> Overall Neutral</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
