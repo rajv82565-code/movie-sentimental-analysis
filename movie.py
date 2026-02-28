@@ -116,7 +116,9 @@ st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", uns
 st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
 
 movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
+    "✍️ Enter a Movie Name",
+    placeholder="e.g., Inception, The Dark Knight",
+    help="Enter the name of a movie to see the sentiment of reviews mentioning it."
 )
 
 if st.button("🔍 Analyze Sentiment"):
@@ -156,6 +158,7 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 total = len(reviews_text)
                 
+                st.markdown(f"<div role='status' aria-live='polite'>", unsafe_allow_html=True)
                 st.markdown(f"### Results for '**{movie_name}**'")
                 st.write(f"Found exactly {total} review(s) mentioning this movie.")
                 
@@ -164,23 +167,23 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 with col1:
                     st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Positive</div>
-                        <div class='stat-value' style='color: #86efac;'>{pos_count}</div>
+                    <div class='stat-box' aria-label='{pos_count} positive reviews'>
+                        <div class='stat-label' aria-hidden='true'>Positive</div>
+                        <div class='stat-value' style='color: #86efac;' aria-hidden='true'>{pos_count}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with col2:
                     st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Neutral</div>
-                        <div class='stat-value' style='color: #e2e8f0;'>{neu_count}</div>
+                    <div class='stat-box' aria-label='{neu_count} neutral reviews'>
+                        <div class='stat-label' aria-hidden='true'>Neutral</div>
+                        <div class='stat-value' style='color: #e2e8f0;' aria-hidden='true'>{neu_count}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 with col3:
                     st.markdown(f"""
-                    <div class='stat-box'>
-                        <div class='stat-label'>Negative</div>
-                        <div class='stat-value' style='color: #fca5a5;'>{neg_count}</div>
+                    <div class='stat-box' aria-label='{neg_count} negative reviews'>
+                        <div class='stat-label' aria-hidden='true'>Negative</div>
+                        <div class='stat-value' style='color: #fca5a5;' aria-hidden='true'>{neg_count}</div>
                     </div>
                     """, unsafe_allow_html=True)
                 
@@ -188,10 +191,11 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 # Overall sentiment logic
                 if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-positive'><span role='img' aria-label='happy face'>😊</span> Overall Positive</div>", unsafe_allow_html=True)
                 elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-negative'><span role='img' aria-label='sad face'>☹️</span> Overall Negative</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-neutral'><span role='img' aria-label='neutral face'>😐</span> Overall Neutral</div>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
