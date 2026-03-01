@@ -112,14 +112,18 @@ except FileNotFoundError:
 # ---------- UI ----------
 st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-st.markdown("<div class='title'>🎬 Movie Review Sentiment Analysis</div>", unsafe_allow_html=True)
-st.markdown("<div class='subtitle'>NLP-based Polarity Detection</div><br>", unsafe_allow_html=True)
+st.markdown("<h1 class='title'><span role='img' aria-label='clapperboard'>🎬</span> Movie Review Sentiment Analysis</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>NLP-based Polarity Detection</p><br>", unsafe_allow_html=True)
 
-movie_name = st.text_input(
-    "✍️ Enter a Movie Name"
-)
+with st.form(key="search_form", border=False):
+    movie_name = st.text_input(
+        "✍️ Enter a Movie Name",
+        placeholder="e.g. Inception, The Matrix...",
+        help="Search for a movie in our dataset to analyze its overall sentiment."
+    )
+    submit_button = st.form_submit_button("🔍 Analyze Sentiment", use_container_width=True)
 
-if st.button("🔍 Analyze Sentiment"):
+if submit_button:
     if movie_name.strip() == "":
         st.warning("Please enter a movie name")
     else:
@@ -128,7 +132,8 @@ if st.button("🔍 Analyze Sentiment"):
             relevant_reviews = df[df['review'].str.contains(movie_name, case=False, na=False)]
             
             if len(relevant_reviews) == 0:
-                st.warning(f"No reviews found in the dataset for '{movie_name}'. Please try another movie.")
+                st.warning(f"No reviews found in the dataset for '{movie_name}'.")
+                st.info("💡 **Hint:** Try searching for movies like *Inception*, *The Matrix*, *Titanic*, or *The Dark Knight*.")
             else:
                 reviews_text = relevant_reviews['review'].tolist()
                 
@@ -188,10 +193,10 @@ if st.button("🔍 Analyze Sentiment"):
                 
                 # Overall sentiment logic
                 if pos_count > neg_count and pos_count >= neu_count:
-                    st.markdown("<div class='result-positive'>😊 Overall Positive</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-positive' role='status' aria-live='polite'><span role='img' aria-label='happy face'>😊</span> Overall Positive</div>", unsafe_allow_html=True)
                 elif neg_count > pos_count and neg_count >= neu_count:
-                    st.markdown("<div class='result-negative'>☹️ Overall Negative</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-negative' role='status' aria-live='polite'><span role='img' aria-label='frowning face'>☹️</span> Overall Negative</div>", unsafe_allow_html=True)
                 else:
-                    st.markdown("<div class='result-neutral'>😐 Overall Neutral</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='result-neutral' role='status' aria-live='polite'><span role='img' aria-label='neutral face'>😐</span> Overall Neutral</div>", unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
